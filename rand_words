@@ -1,0 +1,49 @@
+#!/usr/bin/env python
+
+import string
+import sys
+import random
+
+words = open("/usr/share/dict/words").readlines()
+
+pass_len_words = 3
+suffix_len = 3
+max_word_len = 10
+
+if len(sys.argv) >= 2:
+    pass_len_words = int(sys.argv[1])
+if len(sys.argv) >= 3:
+    suffix_len = int(sys.argv[2])
+if len(sys.argv) >= 4:
+    max_word_len = int(sys.argv[3])
+
+
+def get_word():
+    word = words[random.randint(0, len(words)-1)].strip()
+    ascii_word = True
+    for letter in word:
+        if letter.lower() not in string.ascii_letters:
+            ascii_word = False
+    if ascii_word and len(word) <= max_word_len:
+        return word
+    else:
+        return get_word()
+
+
+salt_chars = ""
+#salt_chars += string.ascii_letters * 5
+salt_chars += string.digits * 5
+salt_chars += string.punctuation
+
+salt_phrase = ""
+
+for word in xrange(pass_len_words):
+#    salt_phrase += words[random.randint(0, len(words)-1)].strip()
+    salt_phrase += get_word()
+    salt_phrase += " "
+
+for char in xrange(suffix_len):
+    salt_phrase += salt_chars[random.randint(0, len(salt_chars) - 1)]
+
+print salt_phrase
+
